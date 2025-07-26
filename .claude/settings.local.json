@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(railway --version)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "Bash(railway whoami:*)",
+      "Bash(railway init:*)",
+      "Bash(railway list:*)",
+      "Bash(ls:*)",
+      "Bash(railway up:*)",
+      "Bash(railway:*)",
+      "mcp__railway__project_list",
+      "mcp__railway__project_info",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ],
+    "deny": []
+  }
+}
