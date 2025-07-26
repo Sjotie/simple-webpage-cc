@@ -62,7 +62,8 @@ jobs:
     # Deploy using Railway's GitHub Action
     - name: Deploy to Railway
       uses: bervProject/railway-deploy@main
-      with:
+      env:
         # RAILWAY_TOKEN must be added to your repository secrets
-        railway_token: ${{ secrets.RAILWAY_TOKEN }}
+        RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      with:
         service: simple-webpage-service
