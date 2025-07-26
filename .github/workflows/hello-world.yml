@@ -1,0 +1,31 @@
+# EXAMPLE 1: The simplest GitHub Action - Hello World!
+# This workflow demonstrates the basic structure
+
+name: Hello World Example
+
+# This workflow runs when you push code OR manually trigger it
+on:
+  push:
+  workflow_dispatch:  # Allows manual triggering from GitHub UI
+
+jobs:
+  say-hello:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Each step can have a name (optional but recommended)
+      - name: Say Hello
+        run: echo "Hello, World!"
+      
+      # You can run multiple commands
+      - name: Show date and time
+        run: |
+          echo "Current date: $(date)"
+          echo "Running on: ${{ runner.os }}"
+      
+      # Access workflow information
+      - name: Print event info
+        run: |
+          echo "Triggered by: ${{ github.event_name }}"
+          echo "Branch: ${{ github.ref }}"
+          echo "Commit SHA: ${{ github.sha }}"

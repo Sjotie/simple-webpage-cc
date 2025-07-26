@@ -1,0 +1,52 @@
+# EXAMPLE 4: Matrix Testing - Test across multiple environments
+# This is useful for testing compatibility
+
+name: Cross-Platform Testing
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+
+jobs:
+  test-matrix:
+    # Define the matrix strategy
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: [16, 18, 20]
+        # You can exclude specific combinations
+        exclude:
+          - os: macos-latest
+            node-version: 16
+    
+    # This job will run 8 times (3 OS × 3 Node versions - 1 excluded)
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      
+      - name: Display environment
+        run: |
+          echo "Testing on ${{ matrix.os }} with Node.js ${{ matrix.node-version }}"
+          node --version
+          npm --version
+      
+      - name: Install and test
+        run: |
+          npm ci
+          npm test --if-present
+      
+      # Operating system specific steps
+      - name: Windows specific step
+        if: runner.os == 'Windows'
+        run: echo "Running on Windows!"
+        
+      - name: Unix specific step  
+        if: runner.os != 'Windows'
+        run: echo "Running on Unix-based system!"

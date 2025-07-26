@@ -1,0 +1,39 @@
+# EXAMPLE 2: Scheduled Workflows (Cron Jobs)
+# This workflow runs automatically on a schedule
+
+name: Scheduled Task Example
+
+on:
+  # Run at 9 AM UTC every Monday
+  schedule:
+    - cron: '0 9 * * 1'
+  
+  # Also allow manual runs for testing
+  workflow_dispatch:
+
+jobs:
+  weekly-cleanup:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      # Example: Clean up old logs or temporary files
+      - name: Cleanup task
+        run: |
+          echo "Running weekly cleanup..."
+          echo "Current time: $(date)"
+          # Add your cleanup commands here
+          
+      # Example: Send a notification (using environment variables)
+      - name: Send notification
+        env:
+          WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}  # Store secrets in Settings > Secrets
+        run: |
+          if [ ! -z "$WEBHOOK_URL" ]; then
+            echo "Sending notification..."
+            # curl -X POST $WEBHOOK_URL -d '{"text":"Weekly cleanup completed"}'
+          else
+            echo "No webhook configured"
+          fi

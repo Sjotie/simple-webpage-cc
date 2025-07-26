@@ -1,0 +1,74 @@
+# EXAMPLE 3: Pull Request Checks
+# This workflow runs checks on every pull request
+
+name: PR Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  # Job 1: Check code quality
+  code-quality:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      # Check for common issues
+      - name: Check file sizes
+        run: |
+          echo "Checking for large files..."
+          find . -type f -size +1M | grep -v node_modules | grep -v .git || echo "✅ No large files found"
+      
+      # Check for sensitive data
+      - name: Check for secrets
+        run: |
+          echo "Checking for potential secrets..."
+          # Simple check for common patterns (in real projects, use tools like truffleHog)
+          ! grep -r "password\s*=\s*['\"]" --include="*.js" --include="*.json" . || echo "⚠️  Potential hardcoded password found!"
+  
+  # Job 2: Add labels based on files changed
+  auto-label:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Check changed files
+        id: changes
+        run: |
+          # This is a simple example - GitHub has actions for this
+          echo "Files changed in this PR:"
+          git diff --name-only origin/main...HEAD || true
+  
+  # Job 3: Comment on PR
+  pr-comment:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    
+    steps:
+      - name: Comment PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Only comment on first-time contributors
+            const creator = context.payload.pull_request.user.login;
+            const isPR = !!context.payload.pull_request;
+            
+            if (isPR) {
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `Thanks for your PR @${creator}! 🎉\n\nOur automated checks are running.`
+              });
+            }
